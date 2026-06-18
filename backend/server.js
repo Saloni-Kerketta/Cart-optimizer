@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors'); // Allows your React frontend to talk to this backend
 require('dotenv').config(); // <-- NEW: Loads your .env file
 const recommendationRoutes = require('./src/routes/recommendationRoutes');
+const productRoutes = require('./src/routes/productRoutes'); 
+const cartRoutes = require('./src/routes/cartRoutes');
 const app = express();
 
 // Middleware
@@ -19,7 +21,8 @@ mongoose.connect(databaseLink)
 
 // Register Routes
 app.use('/api/recommendations', recommendationRoutes);
-
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
