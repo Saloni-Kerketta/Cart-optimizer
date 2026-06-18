@@ -1,10 +1,10 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 const mongoose = require('mongoose');
+require('dotenv').config({ path: __dirname + '/../.env' });
 const ProductRelationship = require('../src/models/ProductRelationship');
 
-const databaseLink = 'mongodb+srv://cartsystem01_db_user:4hReo4gWOyuRwxpQ@cluster0.dnybeqx.mongodb.net/smart_cart?appName=Cluster0';
-
+const databaseLink = process.env.MONGO_URI;
 // We will use this to group products by their Order ID. 
 // Think of it like a bunch of shopping baskets.
 let historicalCarts = {}; 
