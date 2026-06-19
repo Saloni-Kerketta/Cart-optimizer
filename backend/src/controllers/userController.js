@@ -6,6 +6,22 @@ const generateToken = require('../utils/generateToken');
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+        // Allow only selected email providers
+    const allowedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'outlook.com',
+      'hotmail.com'
+    ];
+
+    const domain = email.split('@')[1];
+
+    if (!allowedDomains.includes(domain)) {
+      return res.status(400).json({
+        message:
+          'Only Gmail, Yahoo, Outlook and Hotmail emails are allowed'
+      });
+    }
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
