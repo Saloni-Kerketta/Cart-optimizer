@@ -5,6 +5,7 @@ and improving the customer's shopping experience.
 
 # To work with gemini integration
 npm install @google/genai
+
 create Gemini API key to communicate with Google's servers.(stored in .env file)
 
 Test Your Endpoint on Thunder

@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/genai": "^2.9.0",
+    "@google/genai": "^2.8.0",
     "axios": "^1.18.0",
     "cors": "^2.8.6",
     "csv-parser": "^3.2.1",
