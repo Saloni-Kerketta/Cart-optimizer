@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors'); 
 require('dotenv').config(); 
-
+const productRoutes = require('./src/routes/productRoutes');
 console.log(require.resolve('./src/routes/userRoutes'));
 
 // 1. Initialize Express
@@ -45,6 +45,7 @@ const cartRoutes = require('./src/routes/cartRoutes');
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes); 
+app.use('/api/products', productRoutes); // product routes added here 
 
 // 5. MongoDB Connection (With safety check)
 const databaseLink = process.env.MONGO_URI;
