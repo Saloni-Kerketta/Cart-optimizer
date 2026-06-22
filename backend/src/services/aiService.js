@@ -1,8 +1,6 @@
 const { GoogleGenAI } = require('@google/genai');
-
 // The SDK automatically looks for the GEMINI_API_KEY environment variable.
 const ai = new GoogleGenAI({});
-
 /**
  * Generates a one-sentence sales pitch linking a target product and a recommended product.
  * @param {string} targetProduct
@@ -24,5 +22,4 @@ async function generateSalesPitch(targetProduct, recommendedProduct) {
         throw new Error('Failed to generate sales pitch.');
     }
 }
-
 module.exports = { generateSalesPitch };

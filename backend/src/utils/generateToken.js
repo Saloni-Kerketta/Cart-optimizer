@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-
 const generateToken = (id) => {
   // Signs a token with the user's ID, a secret key, and sets it to expire in 30 days
   return jwt.sign({ id }, process.env.JWT_SECRET, {
