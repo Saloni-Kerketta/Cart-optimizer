@@ -1,78 +1,78 @@
 // backend/seedImages.js
-
-// 1. Import dotenv at the very top to load the hidden variables
-require('dotenv').config(); 
-
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const mongoose = require('mongoose');
 const axios = require('axios');
-
-// 2. Pull the keys securely from process.env
 const MONGO_URI = process.env.MONGO_URI;
-const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY; 
-
-// Add a quick safety check so the script warns you if it can't find the .env file
-if (!MONGO_URI || !PIXABAY_API_KEY) {
-  console.error("❌ ERROR: Missing MONGO_URI or PIXABAY_API_KEY in the .env file.");
+const PEXELS_API_KEY = process.env.PEXELS_API_KEY;
+if (!MONGO_URI || !PEXELS_API_KEY) {
+  console.error("❌ ERROR: Missing MONGO_URI or PEXELS_API_KEY in .env");
   process.exit(1);
 }
 
-const productSchema = new mongoose.Schema({}, { strict: false }); 
+const productSchema = new mongoose.Schema({}, { strict: false });
 const Product = mongoose.model('Product', productSchema);
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function updateProductImages() {
   try {
-    console.log('⏳ Connecting to MongoDB Atlas securely...');
+    console.log("⏳ Connecting to MongoDB...");
     await mongoose.connect(MONGO_URI);
-    console.log('✅ Connected successfully to Atlas Database');
+    console.log("✅ Connected successfully");
 
-    // Find items missing an image
-    const products = await Product.find({ 
-      $or: [ { imageUrl: { $exists: false } }, { imageUrl: "" } ] 
-    }).lean();
-    
-    console.log(`📊 Found ${products.length} products needing images.`);
+    const products = await Product.find().lean();
+
+    console.log(`📊 Found ${products.length} products.`);
+    console.log("⏳ Updating images. Please wait...");
 
     for (let i = 0; i < products.length; i++) {
       const productRaw = products[i];
-      
-      const productName = productRaw.ProductName || productRaw.name || productRaw.product_name;
 
-      if (!productName) {
-        console.log(`[${i + 1}/${products.length}] ❌ Skipped: Could not find a name property.`);
-        continue;
-      }
+      const productName =
+        productRaw.ProductName ||
+        productRaw.name ||
+        productRaw.product_name;
 
-      console.log(`[${i + 1}/${products.length}] Fetching image for: ${productName}`);
+      if (!productName) continue;
 
       try {
-        const url = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(productName)}&image_type=photo&per_page=3`;
-        const response = await axios.get(url);
+        const response = await axios.get(
+          `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+            productName
+          )}&per_page=1`,
+          {
+            headers: {
+              Authorization: PEXELS_API_KEY,
+            },
+          }
+        );
 
-        if (response.data.hits && response.data.hits.length > 0) {
-          const imgUrl = response.data.hits[0].webformatURL;
-          
-          await Product.updateOne({ _id: productRaw._id }, { $set: { imageUrl: imgUrl } });
-          console.log(`   ✅ Saved: ${imgUrl}`);
-        } else {
-          console.log(`   ⚠️ No image found on Pixabay for "${productName}"`);
+        if (response.data.photos && response.data.photos.length > 0) {
+          const imgUrl = response.data.photos[0].src.large;
+
+          await Product.updateOne(
+            { _id: productRaw._id },
+            {
+              $set: {
+                imageUrl: imgUrl,
+              },
+            }
+          );
         }
-
-      } catch (apiError) {
-        console.error(`   ❌ API Error for ${productName}:`, apiError.message);
+      } catch (err) {
+        // Ignore individual failures
       }
 
-      await sleep(500); 
+      await sleep(500);
     }
 
-    console.log('🎉 Image seeding complete!');
+    console.log("🎉 Image seeding complete!");
     process.exit(0);
 
   } catch (error) {
-    console.error('❌ Database Error:', error);
+    console.error("❌ Database Error:", error);
     process.exit(1);
   }
 }
-
 updateProductImages();
