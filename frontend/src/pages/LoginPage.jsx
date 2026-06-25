@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext'; // <-- 1. IMPORT USECART
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -8,6 +9,7 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
+  const { fetchCart } = useCart(); // <-- 2. GET FETCHCART FUNCTION
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,7 +17,6 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // NOTE: Adjust '/api/users/login' if your backend route is named differently
       const response = await fetch('http://localhost:7000/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,7 +29,15 @@ const LoginPage = () => {
         throw new Error(data.message || 'Invalid email or password');
       }
 
-      // Success! You might want to save a token to localStorage here later
+      // 🌟 3. MAIN FIX: Save token to localStorage 🌟
+      // Ensure 'data.token' matches what your backend actually sends!
+      localStorage.setItem('token', data.token); 
+      
+      // 🌟 4. Sync Cart: Load the user's cart immediately after login 🌟
+      if (fetchCart) {
+        fetchCart();
+      }
+
       console.log('Login successful:', data);
       
       // Redirect back to the Home Page

@@ -1,10 +1,23 @@
 import React from 'react';
 import { useCart } from '../context/CartContext'; 
+import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart(); 
+  const navigate = useNavigate();
 
-  // Try the database image first
+  const handleAddToCart = () => {
+    const token = localStorage.getItem('token'); 
+
+    if (!token) {
+      alert("Please login or signup to add items to your cart!");
+      navigate('/login'); 
+      return; 
+    }
+
+    addToCart(product);
+  };
+
   const initialImage = product.imageUrl || `https://placehold.co/600x400/e2e8f0/1e293b?text=${encodeURIComponent(product.ProductName)}`;
 
   return (
@@ -16,7 +29,6 @@ const ProductCard = ({ product }) => {
           alt={product.ProductName || "Product"} 
           className="w-full h-full object-cover"
           onError={(e) => {
-            // If the Pixabay link is dead, swap it for a nice placeholder with the product name!
             e.target.onerror = null; 
             e.target.src = `https://placehold.co/600x400/e2e8f0/1e293b?text=${encodeURIComponent(product.ProductName || 'Product')}`;
           }}
@@ -42,8 +54,9 @@ const ProductCard = ({ product }) => {
         {/* Add to Cart Button */}
         <div className="mt-auto">
           <button 
-            onClick={() => addToCart(product)} 
-            className="w-full bg-gray-900 text-white py-2 rounded font-medium hover:bg-gray-800 transition-colors active:scale-95"
+            onClick={handleAddToCart} 
+            // Yahan cursor-pointer add kiya gaya hai 👇
+            className="w-full cursor-pointer bg-gray-900 text-white py-2 rounded font-medium hover:bg-gray-800 transition-colors active:scale-95"
           >
             Add to Cart
           </button>
