@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Allows your React frontend to talk to this backend
-require('dotenv').config(); // <-- NEW: Loads your .env file
+const cors = require('cors');
+require('dotenv').config();
 
+// --- THE MAGIC NETWORK BYPASS ---
+const dns = require('node:dns');
+dns.setDefaultResultOrder('ipv4first'); // Forces Node to stop prioritizing broken IPv6
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const recommendationRoutes = require('./src/routes/recommendationRoutes');
 const productRoutes = require('./src/routes/productRoutes');
@@ -34,15 +38,14 @@ const databaseLink = process.env.MONGO_URI;
 if (!databaseLink) {
     console.error("⚠️ WARNING: MONGO_URI is missing from .env file!");
 } else {
-    
-    mongoose.connect(databaseLink)
-        .then(() => console.log('Successfully connected to MongoDB Atlas!'))
-        .catch((err) => console.error('MongoDB connection error:', err));
+    mongoose.connect(process.env.MONGO_URI, { family: 4 })
+    .then(() => console.log('Successfully connected to MongoDB Atlas!'))
+    .catch((err) => console.error('MongoDB connection error:', err));
 }
 
-
 // Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7000;
+
 app.listen(PORT, () => {
     console.log(`Smart Cart Backend is running on port ${PORT}`);
 });
