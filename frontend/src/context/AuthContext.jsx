@@ -9,7 +9,9 @@ export const AuthProvider = ({ children }) => {
     // STEP 3: Create the memory variable!
     // For now, we are hardcoding it to "testUser99" so your Cart API works immediately.
     // Later, when you build the Login page, we will change this blank or real user data.
-    const [userId, setUserId] = useState("testUser99");
+    const [userId, setUserId] = useState(() => {
+        return localStorage.getItem('token') ? "activeUser" : null;
+    });
 
     return (
         // STEP 4: Wrap the website in the cloud, and pass down the userId memory

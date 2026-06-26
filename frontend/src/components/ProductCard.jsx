@@ -21,7 +21,10 @@ const ProductCard = ({ product }) => {
   const initialImage = product.imageUrl || `https://placehold.co/600x400/e2e8f0/1e293b?text=${encodeURIComponent(product.ProductName)}`;
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden
+                flex flex-col
+                transition-all 
+                hover:-translate-y-2 cursor-pointer">
       {/* Product Image */}
       <div className="h-48 overflow-hidden bg-gray-200">
         <img 

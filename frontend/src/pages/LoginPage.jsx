@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext'; // <-- 1. IMPORT USECART
+import React, { useState, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext'; 
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
+
+  // 1. Grab the context updater and navigation hook
+  const { setUserId } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { fetchCart } = useCart(); // <-- 2. GET FETCHCART FUNCTION
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
 
     try {
+      // 2. Call your Node.js backend
       const response = await fetch('http://localhost:7000/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -25,82 +25,80 @@ const LoginPage = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Invalid email or password');
+      if (response.ok) {
+        // 3. Save the secure token to the browser
+        localStorage.setItem('token', data.token);
+        
+        // 4. INSTANTLY UPDATE THE NAVBAR!
+        setUserId("activeUser"); 
+        
+        // 5. Send the user back to the home page
+        navigate('/');
+      } else {
+        // Show any error messages sent back by the server
+        setError(data.message || 'Invalid email or password');
       }
-
-      // 🌟 3. MAIN FIX: Save token to localStorage 🌟
-      // Ensure 'data.token' matches what your backend actually sends!
-      localStorage.setItem('token', data.token); 
-      
-      // 🌟 4. Sync Cart: Load the user's cart immediately after login 🌟
-      if (fetchCart) {
-        fetchCart();
-      }
-
-      console.log('Login successful:', data);
-      
-      // Redirect back to the Home Page
-      navigate('/');
-      
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      console.error('Login error:', err);
+      setError('Unable to connect to the server. Please try again.');
     }
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">Welcome Back</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
         
+        <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">
+          Welcome Back
+        </h2>
+
+        {/* Error Alert */}
         {error && (
-          <div className="bg-red-50 text-red-500 p-3 rounded mb-6 text-sm text-center">
-            {error}
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+            <span className="block sm:inline">{error}</span>
           </div>
         )}
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-            <input 
-              type="email" 
+            <label className="block text-sm font-medium text-gray-700">Email Address</label>
+            <input
+              type="email"
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input 
-              type="password" 
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
               required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition-all"
               placeholder="••••••••"
             />
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+          <button
+            type="submit"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            Sign In
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-600">
+        <div className="mt-6 text-center text-sm text-gray-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:text-blue-800 font-semibold">
-            Sign up here
+          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            Register here
           </Link>
-        </p>
+        </div>
+        
       </div>
     </div>
   );
