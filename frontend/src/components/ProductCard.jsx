@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Product Details */}
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-4 flex flex-col grow">
         <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
           {product.ProductName || "Unnamed Product"}
         </h3>

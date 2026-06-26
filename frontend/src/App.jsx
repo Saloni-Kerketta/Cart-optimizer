@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext'; // <-- Import the Provider
+import { AuthProvider } from './context/AuthContext'; // Or whatever the provider component is named in that file
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -10,6 +11,7 @@ import CartPage from './pages/CartPage'; // <-- We will build this next
 function App() {
   return (
     // Wrap everything in CartProvider
+    <AuthProvider>
     <CartProvider>
       <Router>
         <Navbar />
@@ -23,6 +25,7 @@ function App() {
         </main>
       </Router>
     </CartProvider>
+    </AuthProvider>
   );
 }
 
