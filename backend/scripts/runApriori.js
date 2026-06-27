@@ -1,10 +1,11 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 const mongoose = require('mongoose');
-require('dotenv').config({ path: __dirname + '/../.env' });
 const ProductRelationship = require('../src/models/ProductRelationship');
+require('dotenv').config({ path: __dirname + '/../.env' });
 
 const databaseLink = process.env.MONGO_URI;
+
 // We will use this to group products by their Order ID. 
 // Think of it like a bunch of shopping baskets.
 let historicalCarts = {}; 
@@ -14,12 +15,11 @@ let pairFrequencies = {};
 // STEP 1: READ THE DATA
 // We wrap this in a "Promise" so JavaScript waits for the whole file 
 // to finish reading before moving on to Step 2.
-
 function loadOrderData() {
     return new Promise((resolve) => {
         console.log("1. Reading Order Data...");
 
-        fs.createReadStream(__dirname + '/../data/order_items_dataset.csv')
+        fs.createReadStream(__dirname + '/../order_items_dataset.csv')
             .pipe(csv())
             .on('data', (row) => {
                 let orderId = row.OrderID.trim();
@@ -111,11 +111,3 @@ async function runMachineLearningPipeline() {
     await saveToDatabase();         // Wait for Step 3
 }
 runMachineLearningPipeline();
-
-
-
-
-
-
-
-// const databaseLink = 'mongodb+srv://cartsystem01_db_user:4hReo4gWOyuRwxpQ@cluster0.dnybeqx.mongodb.net/smart_cart?appName=Cluster0';

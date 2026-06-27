@@ -78,7 +78,7 @@ const HomePage = () => {
       
       {/* Header and Search Bar Section */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-        <h1 className="text-3xl font-bold text-gray-800">Featured Products</h1>
+        <h1 className="text-3xl font-bold text-gray-800">All Products</h1>
         
         {/* NEW: SEARCH INPUT */}
         <div className="w-full md:w-96 relative">
