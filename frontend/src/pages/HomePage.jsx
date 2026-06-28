@@ -15,7 +15,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${API_URL}http://localhost:7000/api/products`); 
+        const response = await fetch(`${API_URL}/api/products`); 
         
         if (!response.ok) {
           throw new Error('Network response was not ok');
