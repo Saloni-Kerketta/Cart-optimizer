@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const RegisterPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -17,7 +17,7 @@ const RegisterPage = () => {
 
     try {
       // NOTE: Adjust '/api/users/register' if your backend route is named differently
-      const response = await fetch('http://localhost:7000/api/users/register', {
+      const response = await fetch(`${API_URL}/api/users/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

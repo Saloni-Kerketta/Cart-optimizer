@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal, addToCart } = useCart();
   
@@ -19,7 +19,7 @@ const CartPage = () => {
 
       setLoadingAi(true);
       try {
-        const response = await fetch('http://localhost:7000/api/recommendations/generate', {
+        const response = await fetch(`${API_URL}/api/recommendations/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productId: firstItemTargetId }) 

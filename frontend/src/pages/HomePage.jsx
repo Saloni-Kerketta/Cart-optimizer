@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-
+const API_URL = import.meta.env.VITE_API_URL;
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +15,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:7000/api/products'); 
+        const response = await fetch(`${API_URL}http://localhost:7000/api/products`); 
         
         if (!response.ok) {
           throw new Error('Network response was not ok');

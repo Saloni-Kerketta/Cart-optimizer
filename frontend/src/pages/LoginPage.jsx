@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext'; 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +18,7 @@ const LoginPage = () => {
 
     try {
       // 2. Call your Node.js backend
-      const response = await fetch('http://localhost:7000/api/users/login', {
+      const response = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
